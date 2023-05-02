@@ -10,11 +10,6 @@
 #If you could have a crack at reproducing this in R starting from the raw OLIFE scores that would be super.
 #The end goal then is a 4x2 repeated measures ANOVA on the average 5-point scores 
 #when participants say yes or no on the standard 2-point scale. Let me know if you want more detail on that.
-five_point_reverse <-function(data_input){
-    data_input = switch(as.character(data_input,'1'=5,'2'=4,'4'=))
-  }
-}
-
 
 library('tidyverse')
 library('dplyr')
