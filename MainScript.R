@@ -23,14 +23,28 @@ Dass_raw <- x%>%
          DASS1,DASS2,DASS3,DASS4,DASS5,DASS6,DASS7,
          DASS8,DASS9,DASS10,DASS11,DASS12,DASS13,DASS14,
          DASS15,DASS16,DASS17,DASS18,DASS19,DASS20,DASS21)
-#dassSTRESS, dassDEPRESSION, dassANXIETY
+Dass_raw <- Dass_raw%>%
+  dplyr::mutate(dassDEPRESSION = (DASS3 + DASS5 + DASS10 + DASS13 + DASS16 + DASS17 + DASS21)*2,
+                dassANXIETY = (DASS2 + DASS4 + DASS7 + DASS9 + DASS15 + DASS19 + DASS20)*2,
+                dassSTRESS = (DASS1 + DASS6 + DASS8 + DASS11 + DASS12 + DASS14 + DASS18)*2)
+#Depression: 3, 5, 10, 13, 16, 17, 21
+#Anxiety:  2, 4, 7, 9, 15, 19, 20
+#Stress:  1, 6, 8, 11, 12, 14, 18
 
 SPQ_raw <- x%>%
   dplyr::select(PartNo, Age, Gender, CounterCode,
          SPQ1,SPQ2,SPQ3,SPQ4,SPQ5,SPQ6,SPQ7,SPQ8,SPQ9,SPQ10,
          SPQ11,SPQ12,SPQ13,SPQ14,SPQ15,SPQ16,SPQ17,SPQ18,SPQ19,SPQ20,
          SPQ21,SPQ22)
-#spgCOGPERCEP, spqINTERPERSON, spqINTERPERSON, spqTOTAL
+SPQ_raw <- SPQ_raw%>%
+  dplyr::mutate(spqCOGPERCEP = (SPQ2 + SPQ4 + SPQ5 + SPQ9 + SPQ10 + SPQ12 + SPQ16 + SPQ17),
+                spqINTERPERSON = (SPQ1 + SPQ7 + SPQ11 + +SPQ14 + SPQ15 + SPQ18 + SPQ21 + SPQ22),
+                spqDISORGANISED = (SPQ3 + SPQ6 + SPQ8 + SPQ13 + SPQ19 + SPQ20),
+                spqTOTAL = (spqINTERPERSON + spqDISORGANISED + spqCOGPERCEP))
+#spgCOGPERCEP, spqINTERPERSON, spqDISORGANISED, spqTOTAL
+#spqINTERPERSONAL: 1,7,11,14,15,18,21,22
+#spqDISORGANISED : 3,6,8,13,19,20
+#spqCOGPERCEP : 2,4,5,9,10,12,16,17
 
 SSOH_raw <- x%>%
   dplyr::select(PartNo, Age, Gender, CounterCode,
@@ -67,9 +81,6 @@ SSOH_raw <- SSOH_raw%>% # add in the reverse scores columns
   dplyr::mutate(avgSSOSH = sum(SSOSH1, SSOSH2_reverse,SSOSH3,SSOSH4_reverse,
                                SSOSH5_reverse, SSOSH6,SSOSH7_reverse,SSOSH8,
                                SSOSH9_reverse,SSOSH10)/10)
-  
-
-
 OLIFE_raw <- x%>%
   dplyr::select(PartNo, Age, Gender, CounterCode,
          OLIFE1_YN,OLIFE2_YN,OLIFE3_YN,OLIFE4_YN,OLIFE5_YN,OLIFE6_YN,OLIFE7_YN,OLIFE8_YN,OLIFE9_YN,OLIFE10_YN,
@@ -100,6 +111,14 @@ OLIFE_raw <- OLIFE_raw%>%
                 OLIFE14_5P_reversed_IN = case_when(OLIFE14_5P == 0~4,OLIFE14_5P == 1~3,OLIFE14_5P == 3~1,OLIFE14_5P == 4~30,TRUE~OLIFE14_5P),
                 OLIFE12_YN_reversed_IN = case_when(OLIFE12_YN == 1~0,OLIFE12_YN == 0~1,TRUE~OLIFE12_YN),
                 OLIFE12_5P_reversed_IN = case_when(OLIFE12_5P == 0~4,OLIFE12_5P == 1~3,OLIFE12_5P == 3~1,OLIFE12_5P == 4~30,TRUE~OLIFE12_5P))
+OLIFE_raw <- OLIFE_raw%>%
+  dplyr::mutate(UE_YN = (OLIFE1_YN + OLIFE5_YN + OLIFE9_YN + OLIFE14_YN + OLIFE22_YN + OLIFE26_YN + 
+                           OLIFE27_YN + OLIFE28_YN + OLIFE29_YN + OLIFE34_YN + OLIFE36_YN),
+                CD_YN = (OLIFE2_YN + OLIFE8_YN + OLIFE11_YN + OLIFE15_YN + OLIFE16_YN + OLIFE21_YN + 
+                           OLIFE25_YN + OLIFE32_YN + OLIFE35_YN + OLIFE37_YN + OLIFE38_YN),
+                IA_YN = (OLIFE3_YN + OLIFE7_YN + OLIFE13_YN + OLIFE18_YN + OLIFE20_YN + OLIFE24_YN + OLIFE30_YN),
+                IN_YN = (OLIFE4_YN_reversed_IA + OLIFE6_YN + OLIFE10_YN + OLIFE12_YN + OLIFE19_YN + OLIFE23_YN + OLIFE31_YN + OLIFE33_YN))
+
 #UE_YN, CD_YN, IA_YN, IN_YN,
 #UE_5P, CD_5P, IA_5P, IN_5P
 #OLIFE_5P_Y_SUM
@@ -109,7 +128,10 @@ OLIFE_raw <- OLIFE_raw%>%
 #avg_UE_5P_Y, avg_CD_5P_Y, avg_IA_5P_Y, avg_IN_5P_Y
 #avg_UE_5P_N, avg_CD_5P_N, avg_IA_5P_N, avg_IN_5P_N
 
-
+#Unusual experiences	      1, 5, 9, 14, 17, 22, 26, 27, 28, 29, 34, 36
+#Cognitive disorganization 2, 8, 11, 15, 16, 21, 25, 32, 35, 37, 38
+#Introvertive anhedonia 	  3, 7, 13*, 18*, 20, 24, 30*
+#Impulsive nonconformity   4, 6, 10, 12, 19, 23*, 31, 33
 
 x_reduced <- x%>%
   dplyr::select(PartNo, Age, Gender, CounterCode,
