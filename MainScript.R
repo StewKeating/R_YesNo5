@@ -13,6 +13,8 @@
 
 library('tidyverse')
 library('dplyr')
+library('ggplot2')
+library('data.table')
 working_directory <- getwd()
 
 x <- read.csv("Response Scales_Pilot April 2023.csv")
@@ -80,9 +82,9 @@ SSOH_raw <- SSOH_raw%>% # add in the reverse scores columns
                                            SSOSH9 == 4~2,
                                            SSOSH9 == 5~1,
                                            TRUE~SSOSH9))%>%
-  dplyr::mutate(avgSSOSH = sum(SSOSH1, SSOSH2_reverse,SSOSH3,SSOSH4_reverse,
-                               SSOSH5_reverse, SSOSH6,SSOSH7_reverse,SSOSH8,
-                               SSOSH9_reverse,SSOSH10)/10)
+  dplyr::mutate(avgSSOSH = (SSOSH1 + SSOSH2_reverse + SSOSH3 + SSOSH4_reverse +
+                               SSOSH5_reverse + SSOSH6 + SSOSH7_reverse + SSOSH8 +
+                               SSOSH9_reverse + SSOSH10)/10)
 
 OLIFE_raw <- x%>%
   dplyr::select(PartNo, Age, Gender, CounterCode,
@@ -275,73 +277,79 @@ OLIFE_raw <- OLIFE_raw%>%
 
 
 
-'''
+#'''
 
-OLIFE_raw <- OLIFE_raw%>%
-  mutate(OL1Y5P = case_when(is.na(OLIFE1_5P)~0,OLIFE1_YN == 1 ~ OLIFE1_5P, OLIFE1_YN == 0 ~ 0),
-         OL2Y5P = case_when(is.na(OLIFE2_5P)~0,OLIFE2_YN == 1 ~ OLIFE2_5P, OLIFE2_YN == 0 ~ 0),
-         OL3Y5P = case_when(is.na(OLIFE3_5P)~0,OLIFE3_YN == 1 ~ OLIFE3_5P, OLIFE3_YN == 0 ~ 0),
-         OL4Y5P = case_when(is.na(OLIFE4_5P)~0,OLIFE4_YN == 1 ~ OLIFE4_5P, OLIFE4_YN == 0 ~ 0),
-         OL5Y5P = case_when(is.na(OLIFE5_5P)~0,OLIFE5_YN == 1 ~ OLIFE5_5P, OLIFE5_YN == 0 ~ 0),
-         OL6Y5P = case_when(is.na(OLIFE6_5P)~0,OLIFE6_YN == 1 ~ OLIFE6_5P, OLIFE6_YN == 0 ~ 0),
-         OL7Y5P = case_when(is.na(OLIFE7_5P)~0,OLIFE7_YN == 1 ~ OLIFE7_5P, OLIFE7_YN == 0 ~ 0),
-         OL8Y5P = case_when(is.na(OLIFE8_5P)~0,OLIFE8_YN == 1 ~ OLIFE8_5P, OLIFE8_YN == 0 ~ 0),
-         OL9Y5P = case_when(is.na(OLIFE9_5P)~0,OLIFE9_YN == 1 ~ OLIFE9_5P, OLIFE9_YN == 0 ~ 0),
-         OL10Y5P = case_when(is.na(OLIFE10_5P)~0,OLIFE10_YN == 1 ~ OLIFE10_5P, OLIFE10_YN == 0 ~ 0),
-         OL11Y5P = case_when(is.na(OLIFE11_5P)~0,OLIFE11_YN == 1 ~ OLIFE11_5P, OLIFE11_YN == 0 ~ 0),
-         OL12Y5P = case_when(is.na(OLIFE12_5P)~0,OLIFE12_YN == 1 ~ OLIFE12_5P, OLIFE12_YN == 0 ~ 0),
-         OL13Y5P = case_when(is.na(OLIFE13_5P)~0,OLIFE13_YN == 1 ~ OLIFE13_5P, OLIFE13_YN == 0 ~ 0),
-         OL14Y5P = case_when(is.na(OLIFE14_5P)~0,OLIFE14_YN == 1 ~ OLIFE14_5P, OLIFE14_YN == 0 ~ 0),
-         OL15Y5P = case_when(is.na(OLIFE15_5P)~0,OLIFE15_YN == 1 ~ OLIFE15_5P, OLIFE15_YN == 0 ~ 0),
-         OL16Y5P = case_when(is.na(OLIFE16_5P)~0,OLIFE16_YN == 1 ~ OLIFE16_5P, OLIFE16_YN == 0 ~ 0),
-         OL17Y5P = case_when(is.na(OLIFE17_5P)~0,OLIFE17_YN == 1 ~ OLIFE17_5P, OLIFE17_YN == 0 ~ 0),
-         OL18Y5P = case_when(is.na(OLIFE18_5P)~0,OLIFE18_YN == 1 ~ OLIFE18_5P, OLIFE18_YN == 0 ~ 0),
-         OL19Y5P = case_when(is.na(OLIFE19_5P)~0,OLIFE19_YN == 1 ~ OLIFE19_5P, OLIFE19_YN == 0 ~ 0),
-         OL20Y5P = case_when(is.na(OLIFE20_5P)~0,OLIFE20_YN == 1 ~ OLIFE20_5P, OLIFE20_YN == 0 ~ 0),
-         OL21Y5P = case_when(is.na(OLIFE21_5P)~0,OLIFE21_YN == 1 ~ OLIFE21_5P, OLIFE21_YN == 0 ~ 0),
-         OL22Y5P = case_when(is.na(OLIFE22_5P)~0,OLIFE22_YN == 1 ~ OLIFE22_5P, OLIFE22_YN == 0 ~ 0),
-         OL23Y5P = case_when(is.na(OLIFE23_5P)~0,OLIFE23_YN == 1 ~ OLIFE23_5P, OLIFE23_YN == 0 ~ 0),
-         OL24Y5P = case_when(is.na(OLIFE24_5P)~0,OLIFE24_YN == 1 ~ OLIFE24_5P, OLIFE24_YN == 0 ~ 0),
-         OL25Y5P = case_when(is.na(OLIFE25_5P)~0,OLIFE25_YN == 1 ~ OLIFE25_5P, OLIFE25_YN == 0 ~ 0),
-         OL26Y5P = case_when(is.na(OLIFE26_5P)~0,OLIFE26_YN == 1 ~ OLIFE26_5P, OLIFE26_YN == 0 ~ 0),
-         OL27Y5P = case_when(is.na(OLIFE27_5P)~0,OLIFE27_YN == 1 ~ OLIFE27_5P, OLIFE27_YN == 0 ~ 0),
-         OL28Y5P = case_when(is.na(OLIFE28_5P)~0,OLIFE28_YN == 1 ~ OLIFE28_5P, OLIFE28_YN == 0 ~ 0),
-         OL29Y5P = case_when(is.na(OLIFE29_5P)~0,OLIFE29_YN == 1 ~ OLIFE29_5P, OLIFE29_YN == 0 ~ 0),
-         OL30Y5P = case_when(is.na(OLIFE30_5P)~0,OLIFE30_YN == 1 ~ OLIFE30_5P, OLIFE30_YN == 0 ~ 0),
-         OL31Y5P = case_when(is.na(OLIFE31_5P)~0,OLIFE31_YN == 1 ~ OLIFE31_5P, OLIFE31_YN == 0 ~ 0),
-         OL32Y5P = case_when(is.na(OLIFE32_5P)~0,OLIFE32_YN == 1 ~ OLIFE32_5P, OLIFE32_YN == 0 ~ 0),
-         OL33Y5P = case_when(is.na(OLIFE33_5P)~0,OLIFE33_YN == 1 ~ OLIFE33_5P, OLIFE33_YN == 0 ~ 0),
-         OL34Y5P = case_when(is.na(OLIFE34_5P)~0,OLIFE34_YN == 1 ~ OLIFE34_5P, OLIFE34_YN == 0 ~ 0),
-         OL35Y5P = case_when(is.na(OLIFE35_5P)~0,OLIFE35_YN == 1 ~ OLIFE35_5P, OLIFE35_YN == 0 ~ 0),
-         OL36Y5P = case_when(is.na(OLIFE36_5P)~0,OLIFE36_YN == 1 ~ OLIFE36_5P, OLIFE36_YN == 0 ~ 0),
-         OL37Y5P = case_when(is.na(OLIFE37_5P)~0,OLIFE37_YN == 1 ~ OLIFE37_5P, OLIFE37_YN == 0 ~ 0),
-         OL38Y5P = case_when(is.na(OLIFE38_5P)~0,OLIFE38_YN == 1 ~ OLIFE38_5P, OLIFE38_YN == 0 ~ 0),
-         OL39Y5P = case_when(is.na(OLIFE39_5P)~0,OLIFE39_YN == 1 ~ OLIFE39_5P, OLIFE39_YN == 0 ~ 0),
-         OL40Y5P = case_when(is.na(OLIFE40_5P)~0,OLIFE40_YN == 1 ~ OLIFE40_5P, OLIFE40_YN == 0 ~ 0),
-         OL41Y5P = case_when(is.na(OLIFE41_5P)~0,OLIFE41_YN == 1 ~ OLIFE41_5P, OLIFE41_YN == 0 ~ 0),
-         OL42Y5P = case_when(is.na(OLIFE42_5P)~0,OLIFE42_YN == 1 ~ OLIFE42_5P, OLIFE42_YN == 0 ~ 0),
-         OL43Y5P = case_when(is.na(OLIFE43_5P)~0,OLIFE43_YN == 1 ~ OLIFE43_5P, OLIFE43_YN == 0 ~ 0))%>%
-  mutate(OLY5P_SUM = (OL1Y5P + OL2Y5P + OL3Y5P + OL4Y5P + OL5Y5P + 
-                        OL6Y5P + OL7Y5P + OL8Y5P + OL9Y5P + OL10Y5P+
-                        OL11Y5P + OL12Y5P + OL13Y5P + OL14Y5P + OL15Y5P + 
-                        OL16Y5P + OL17Y5P + OL18Y5P + OL19Y5P + OL20Y5P +
-                        OL21Y5P + OL22Y5P + OL23Y5P + OL24Y5P + OL25Y5P + 
-                        OL26Y5P + OL27Y5P + OL28Y5P + OL29Y5P + OL30Y5P +
-                        OL31Y5P + OL32Y5P + OL33Y5P + OL34Y5P + OL35Y5P +
-                        OL36Y5P + OL37Y5P + OL38Y5P + OL39Y5P + OL40Y5P + 
-                        OL41Y5P + OL42Y5P + OL43Y5P))
-'''
+#OLIFE_raw <- OLIFE_raw%>%
+#  mutate(OL1Y5P = case_when(is.na(OLIFE1_5P)~0,OLIFE1_YN == 1 ~ OLIFE1_5P, OLIFE1_YN == 0 ~ 0),
+#         OL2Y5P = case_when(is.na(OLIFE2_5P)~0,OLIFE2_YN == 1 ~ OLIFE2_5P, OLIFE2_YN == 0 ~ 0),
+#         OL3Y5P = case_when(is.na(OLIFE3_5P)~0,OLIFE3_YN == 1 ~ OLIFE3_5P, OLIFE3_YN == 0 ~ 0),
+#         OL4Y5P = case_when(is.na(OLIFE4_5P)~0,OLIFE4_YN == 1 ~ OLIFE4_5P, OLIFE4_YN == 0 ~ 0),
+#         OL5Y5P = case_when(is.na(OLIFE5_5P)~0,OLIFE5_YN == 1 ~ OLIFE5_5P, OLIFE5_YN == 0 ~ 0),
+#         OL6Y5P = case_when(is.na(OLIFE6_5P)~0,OLIFE6_YN == 1 ~ OLIFE6_5P, OLIFE6_YN == 0 ~ 0),
+#         OL7Y5P = case_when(is.na(OLIFE7_5P)~0,OLIFE7_YN == 1 ~ OLIFE7_5P, OLIFE7_YN == 0 ~ 0),
+#         OL8Y5P = case_when(is.na(OLIFE8_5P)~0,OLIFE8_YN == 1 ~ OLIFE8_5P, OLIFE8_YN == 0 ~ 0),
+#         OL9Y5P = case_when(is.na(OLIFE9_5P)~0,OLIFE9_YN == 1 ~ OLIFE9_5P, OLIFE9_YN == 0 ~ 0),
+#         OL10Y5P = case_when(is.na(OLIFE10_5P)~0,OLIFE10_YN == 1 ~ OLIFE10_5P, OLIFE10_YN == 0 ~ 0),
+#         OL11Y5P = case_when(is.na(OLIFE11_5P)~0,OLIFE11_YN == 1 ~ OLIFE11_5P, OLIFE11_YN == 0 ~ 0),
+#         OL12Y5P = case_when(is.na(OLIFE12_5P)~0,OLIFE12_YN == 1 ~ OLIFE12_5P, OLIFE12_YN == 0 ~ 0),
+#         OL13Y5P = case_when(is.na(OLIFE13_5P)~0,OLIFE13_YN == 1 ~ OLIFE13_5P, OLIFE13_YN == 0 ~ 0),
+#         OL14Y5P = case_when(is.na(OLIFE14_5P)~0,OLIFE14_YN == 1 ~ OLIFE14_5P, OLIFE14_YN == 0 ~ 0),
+#         OL15Y5P = case_when(is.na(OLIFE15_5P)~0,OLIFE15_YN == 1 ~ OLIFE15_5P, OLIFE15_YN == 0 ~ 0),
+#         OL16Y5P = case_when(is.na(OLIFE16_5P)~0,OLIFE16_YN == 1 ~ OLIFE16_5P, OLIFE16_YN == 0 ~ 0),
+#         OL17Y5P = case_when(is.na(OLIFE17_5P)~0,OLIFE17_YN == 1 ~ OLIFE17_5P, OLIFE17_YN == 0 ~ 0),
+#         OL18Y5P = case_when(is.na(OLIFE18_5P)~0,OLIFE18_YN == 1 ~ OLIFE18_5P, OLIFE18_YN == 0 ~ 0),
+#         OL19Y5P = case_when(is.na(OLIFE19_5P)~0,OLIFE19_YN == 1 ~ OLIFE19_5P, OLIFE19_YN == 0 ~ 0),
+#         OL20Y5P = case_when(is.na(OLIFE20_5P)~0,OLIFE20_YN == 1 ~ OLIFE20_5P, OLIFE20_YN == 0 ~ 0),
+#         OL21Y5P = case_when(is.na(OLIFE21_5P)~0,OLIFE21_YN == 1 ~ OLIFE21_5P, OLIFE21_YN == 0 ~ 0),
+#         OL22Y5P = case_when(is.na(OLIFE22_5P)~0,OLIFE22_YN == 1 ~ OLIFE22_5P, OLIFE22_YN == 0 ~ 0),
+#         OL23Y5P = case_when(is.na(OLIFE23_5P)~0,OLIFE23_YN == 1 ~ OLIFE23_5P, OLIFE23_YN == 0 ~ 0),
+#         OL24Y5P = case_when(is.na(OLIFE24_5P)~0,OLIFE24_YN == 1 ~ OLIFE24_5P, OLIFE24_YN == 0 ~ 0),
+#         OL25Y5P = case_when(is.na(OLIFE25_5P)~0,OLIFE25_YN == 1 ~ OLIFE25_5P, OLIFE25_YN == 0 ~ 0),
+#         OL26Y5P = case_when(is.na(OLIFE26_5P)~0,OLIFE26_YN == 1 ~ OLIFE26_5P, OLIFE26_YN == 0 ~ 0),
+#         OL27Y5P = case_when(is.na(OLIFE27_5P)~0,OLIFE27_YN == 1 ~ OLIFE27_5P, OLIFE27_YN == 0 ~ 0),
+#         OL28Y5P = case_when(is.na(OLIFE28_5P)~0,OLIFE28_YN == 1 ~ OLIFE28_5P, OLIFE28_YN == 0 ~ 0),
+#         OL29Y5P = case_when(is.na(OLIFE29_5P)~0,OLIFE29_YN == 1 ~ OLIFE29_5P, OLIFE29_YN == 0 ~ 0),
+#         OL30Y5P = case_when(is.na(OLIFE30_5P)~0,OLIFE30_YN == 1 ~ OLIFE30_5P, OLIFE30_YN == 0 ~ 0),
+#         OL31Y5P = case_when(is.na(OLIFE31_5P)~0,OLIFE31_YN == 1 ~ OLIFE31_5P, OLIFE31_YN == 0 ~ 0),
+#         OL32Y5P = case_when(is.na(OLIFE32_5P)~0,OLIFE32_YN == 1 ~ OLIFE32_5P, OLIFE32_YN == 0 ~ 0),
+#         OL33Y5P = case_when(is.na(OLIFE33_5P)~0,OLIFE33_YN == 1 ~ OLIFE33_5P, OLIFE33_YN == 0 ~ 0),
+#         OL34Y5P = case_when(is.na(OLIFE34_5P)~0,OLIFE34_YN == 1 ~ OLIFE34_5P, OLIFE34_YN == 0 ~ 0),
+#         OL35Y5P = case_when(is.na(OLIFE35_5P)~0,OLIFE35_YN == 1 ~ OLIFE35_5P, OLIFE35_YN == 0 ~ 0),
+#         OL36Y5P = case_when(is.na(OLIFE36_5P)~0,OLIFE36_YN == 1 ~ OLIFE36_5P, OLIFE36_YN == 0 ~ 0),
+#         OL37Y5P = case_when(is.na(OLIFE37_5P)~0,OLIFE37_YN == 1 ~ OLIFE37_5P, OLIFE37_YN == 0 ~ 0),
+#         OL38Y5P = case_when(is.na(OLIFE38_5P)~0,OLIFE38_YN == 1 ~ OLIFE38_5P, OLIFE38_YN == 0 ~ 0),
+#         OL39Y5P = case_when(is.na(OLIFE39_5P)~0,OLIFE39_YN == 1 ~ OLIFE39_5P, OLIFE39_YN == 0 ~ 0),
+#         OL40Y5P = case_when(is.na(OLIFE40_5P)~0,OLIFE40_YN == 1 ~ OLIFE40_5P, OLIFE40_YN == 0 ~ 0),
+#         OL41Y5P = case_when(is.na(OLIFE41_5P)~0,OLIFE41_YN == 1 ~ OLIFE41_5P, OLIFE41_YN == 0 ~ 0),
+#         OL42Y5P = case_when(is.na(OLIFE42_5P)~0,OLIFE42_YN == 1 ~ OLIFE42_5P, OLIFE42_YN == 0 ~ 0),
+#         OL43Y5P = case_when(is.na(OLIFE43_5P)~0,OLIFE43_YN == 1 ~ OLIFE43_5P, OLIFE43_YN == 0 ~ 0))%>%
+#  mutate(OLY5P_SUM = (OL1Y5P + OL2Y5P + OL3Y5P + OL4Y5P + OL5Y5P + 
+#                        OL6Y5P + OL7Y5P + OL8Y5P + OL9Y5P + OL10Y5P+
+#                        OL11Y5P + OL12Y5P + OL13Y5P + OL14Y5P + OL15Y5P + 
+#                        OL16Y5P + OL17Y5P + OL18Y5P + OL19Y5P + OL20Y5P +
+#                        OL21Y5P + OL22Y5P + OL23Y5P + OL24Y5P + OL25Y5P + 
+#                        OL26Y5P + OL27Y5P + OL28Y5P + OL29Y5P + OL30Y5P +
+#                        OL31Y5P + OL32Y5P + OL33Y5P + OL34Y5P + OL35Y5P +
+#                        OL36Y5P + OL37Y5P + OL38Y5P + OL39Y5P + OL40Y5P + 
+#                        OL41Y5P + OL42Y5P + OL43Y5P))
+#'''
 
 
 Dass_mod <- Dass_raw%>%
   select(PartNo, Age, Gender, CounterCode, dassDEPRESSION, dassANXIETY, dassSTRESS)
 SPQ_mod <- SPQ_raw%>%
-  select(PartNo, Age, Gender, spqCOGPERCEP, spqINTERPERSON, spqDISORGANISED, spqTOTAL)
+  select(PartNo, Age, Gender, CounterCode, spqCOGPERCEP, spqINTERPERSON, spqDISORGANISED, spqTOTAL)
 SSOH_mod <- SSOH_raw%>%
   select(PartNo,Age,Gender,CounterCode, avgSSOSH)
 OLIFE_mod <- OLIFE_raw%>%
-  select(PartNo,Age,Gender, CounterCode,)
-
+  select(PartNo,Age,Gender, CounterCode,OLY5P_SUM, OLN5P_SUM,
+         IA_5P_N_SUM, UE_5P_N_SUM, CD_5P_N_SUM, IN_5P_N_SUM,
+         IA_5P_Y_SUM, UE_5P_Y_SUM, CD_5P_Y_SUM, IN_5P_Y_SUM,
+         avg_IA_5P_N, avg_UE_5P_N, avg_CD_5P_N, avg_IN_5P_N,
+         avg_IA_5P_Y, avg_UE_5P_Y, avg_CD_5P_Y, avg_IN_5P_Y)
+MainDF <- left_join(Dass_mod, SPQ_mod)
+MainDF <- left_join(MainDF, SSOH_mod)
+MainDF <- left_join(MainDF, OLIFE_mod)
 
 x_reduced <- x%>%
   dplyr::select(PartNo, Age, Gender, CounterCode,
@@ -363,5 +371,37 @@ x_reduced <- x%>%
          in_Ysum, in_Nsum,  # in 5 point scale when answer == Yes/No
          avgUE_Y, avgCD_Y, avgIA_Y, avgIN_Y, # Avg 5 point when answer was yes (for each OLIFE subscale)
          avgUE_N, avgCD_N, avgIA_N, avgIN_N) # Avg 5 point when answer was no  (for each OLIFE subscale)
+names(MainDF)
+
+p1 <- MainDF%>%
+  summarise(IA_N = mean(avg_IA_5P_N),
+            IN_N = mean(avg_IN_5P_N),
+            CD_N = mean(avg_CD_5P_N),
+            UE_N = mean(avg_UE_5P_N))
+p1b <- transpose(p1)
+p1b <- p1b%>%
+  mutate(Row_Num = row_number(), colour = 'Ns')%>%
+  rename(Values = V1)
+p2 <- MainDF%>%
+  summarise(IA_Y = mean(avg_IA_5P_Y),
+            IN_Y = mean(avg_IN_5P_Y),
+            CD_Y = mean(avg_CD_5P_Y),
+            UE_Y = mean(avg_UE_5P_Y))
+p2b <- transpose(p2)
+p2b <- p2b%>%
+  mutate(Row_Num = row_number(), colour = 'Ys')%>%
+  rename(Values = V1)
+
+
+
+P <- ggplot(p1b, aes(x = Row_Num, y = Values, colour = colour))+
+  geom_line()+
+  geom_point()
+
+#P + scale_x_continuous(labels = c('a','b','c','d'))
+P + geom_line(data = p2b, aes(x = Row_Num, y = Values, colour = colour))+
+    geom_point(data = p2b, aes(x = Row_Num, y = Values, colour = colour))+
+    scale_x_continuous(labels = c('IA','IN','CD','UE'))+
+    scale_y_continuous(limits = c(0,3))
 
 
