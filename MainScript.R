@@ -380,7 +380,7 @@ p1 <- MainDF%>%
             UE_N = mean(avg_UE_5P_N))
 p1b <- transpose(p1)
 p1b <- p1b%>%
-  mutate(Row_Num = row_number(), colour = 'Ns')%>%
+  mutate(Row_Num = row_number(), colourColumn = 'Ns')%>%
   rename(Values = V1)
 p2 <- MainDF%>%
   summarise(IA_Y = mean(avg_IA_5P_Y),
@@ -389,12 +389,10 @@ p2 <- MainDF%>%
             UE_Y = mean(avg_UE_5P_Y))
 p2b <- transpose(p2)
 p2b <- p2b%>%
-  mutate(Row_Num = row_number(), colour = 'Ys')%>%
+  mutate(Row_Num = row_number(), colourColumn = 'Ys')%>%
   rename(Values = V1)
 
-
-
-P <- ggplot(p1b, aes(x = Row_Num, y = Values, colour = colour))+
+P <- ggplot(p1b, aes(x = Row_Num, y = Values, colour = colourColumn))+
   geom_line()+
   geom_point()
 
