@@ -17,7 +17,8 @@ library('ggplot2')
 library('data.table')
 working_directory <- getwd()
 
-x <- read.csv("Response Scales_Pilot April 2023.csv")
+#x <- read.csv("Response Scales_Pilot April 2023.csv")
+x <- read.csv("Response Scales_2023 For Stew.csv")
 y <- names(x)
 
 Dass_raw <- x%>%
@@ -113,9 +114,9 @@ OLIFE_raw <- OLIFE_raw%>%
                 OLIFE43_YN_reversed_IN = case_when(OLIFE43_YN == 1~0,OLIFE43_YN == 0~1,TRUE~OLIFE43_YN),
                 OLIFE43_5P_reversed_IN = case_when(OLIFE43_5P == 0~4,OLIFE43_5P == 1~3,OLIFE43_5P == 3~1,OLIFE43_5P == 4~0,TRUE~OLIFE43_5P),
                 OLIFE14_YN_reversed_IN = case_when(OLIFE14_YN == 1~0,OLIFE14_YN == 0~1,TRUE~OLIFE14_YN),
-                OLIFE14_5P_reversed_IN = case_when(OLIFE14_5P == 0~4,OLIFE14_5P == 1~3,OLIFE14_5P == 3~1,OLIFE14_5P == 4~30,TRUE~OLIFE14_5P),
+                OLIFE14_5P_reversed_IN = case_when(OLIFE14_5P == 0~4,OLIFE14_5P == 1~3,OLIFE14_5P == 3~1,OLIFE14_5P == 4~0,TRUE~OLIFE14_5P),
                 OLIFE12_YN_reversed_IN = case_when(OLIFE12_YN == 1~0,OLIFE12_YN == 0~1,TRUE~OLIFE12_YN),
-                OLIFE12_5P_reversed_IN = case_when(OLIFE12_5P == 0~4,OLIFE12_5P == 1~3,OLIFE12_5P == 3~1,OLIFE12_5P == 4~30,TRUE~OLIFE12_5P))
+                OLIFE12_5P_reversed_IN = case_when(OLIFE12_5P == 0~4,OLIFE12_5P == 1~3,OLIFE12_5P == 3~1,OLIFE12_5P == 4~0,TRUE~OLIFE12_5P))
 OLIFE_raw <- OLIFE_raw%>%
   dplyr::mutate(UE_YN = (OLIFE1_YN + OLIFE5_YN + OLIFE8_YN + OLIFE11_YN + OLIFE20_YN + OLIFE21_YN + 
                            OLIFE28_YN + OLIFE30_YN + OLIFE35_YN + OLIFE37_YN + OLIFE40_YN + OLIFE41_YN),
@@ -196,10 +197,10 @@ OLIFE_raw <- OLIFE_raw%>%
                 CD_5P_Y_SUM = (OL2Y5P + OL15Y5P + OL22Y5P + OL24Y5P + OL25Y5P + OL26Y5P + OL29Y5P + OL34Y5P + OL36Y5P + OL38Y5P + OL39Y5P),
                 IA_5P_Y_SUM = (OL3Y5P + OL4Y5P + OL7Y5P + OL17Y5P + OL18Y5P + OL23Y5P + OL27Y5P + OL31Y5P + OL32Y5P + OL33Y5P),
                 IN_5P_Y_SUM = (OL6Y5P + OL9Y5P + OL10Y5P + OL12Y5P + OL13Y5P + OL14Y5P + OL16Y5P + OL19Y5P + OL42Y5P + OL43Y5P))%>%
-  dplyr::mutate(avg_UE_5P_Y = (OL1Y5P + OL5Y5P + OL8Y5P + OL11Y5P + OL20Y5P + OL21Y5P + OL28Y5P + OL30Y5P + OL35Y5P + OL37Y5P + OL40Y5P + OL41Y5P)/12,
-                avg_CD_5P_Y = (OL2Y5P + OL15Y5P + OL22Y5P + OL24Y5P + OL25Y5P + OL26Y5P + OL29Y5P + OL34Y5P + OL36Y5P + OL38Y5P + OL39Y5P)/11,
-                avg_IA_5P_Y = (OL3Y5P + OL4Y5P + OL7Y5P + OL17Y5P + OL18Y5P + OL23Y5P + OL27Y5P + OL31Y5P + OL32Y5P + OL33Y5P)/10,
-                avg_IN_5P_Y = (OL6Y5P + OL9Y5P + OL10Y5P + OL12Y5P + OL13Y5P + OL14Y5P + OL16Y5P + OL19Y5P + OL42Y5P + OL43Y5P)/10)
+  dplyr::mutate(avg_UE_5P_Y = UE_5P_Y_SUM/UE_YN,#12
+                avg_CD_5P_Y = CD_5P_Y_SUM/CD_YN,#11
+                avg_IA_5P_Y = IA_5P_Y_SUM/IA_YN,#10
+                avg_IN_5P_Y = IN_5P_Y_SUM/IN_YN)#10
 
 #UE_5P_Y_SUM, CD_5P_Y_SUM, IA_5P_Y_SUM, IN_5P_Y_SUM
 #avg_UE_5P_Y, avg_CD_5P_Y, avg_IA_5P_Y, avg_IN_5P_Y
@@ -267,15 +268,17 @@ OLIFE_raw <- OLIFE_raw%>%
                 CD_5P_N_SUM = (OL2N5P + OL15N5P + OL22N5P + OL24N5P + OL25N5P + OL26N5P + OL29N5P + OL34N5P + OL36N5P + OL38N5P + OL39N5P),
                 IA_5P_N_SUM = (OL3N5P + OL4N5P + OL7N5P + OL17N5P + OL18N5P + OL23N5P + OL27N5P + OL31N5P + OL32N5P + OL33N5P),
                 IN_5P_N_SUM = (OL6N5P + OL9N5P + OL10N5P + OL12N5P + OL13N5P + OL14N5P + OL16N5P + OL19N5P + OL42N5P + OL43N5P))%>%
-  dplyr::mutate(avg_UE_5P_N = (OL1N5P + OL5N5P + OL8N5P + OL11N5P + OL20N5P + OL21N5P + OL28N5P + OL30N5P + OL35N5P + OL37N5P + OL40N5P + OL41N5P)/12,
-                avg_CD_5P_N = (OL2N5P + OL15N5P + OL22N5P + OL24N5P + OL25N5P + OL26N5P + OL29N5P + OL34N5P + OL36N5P + OL38N5P + OL39N5P)/11,
-                avg_IA_5P_N = (OL3N5P + OL4N5P + OL7N5P + OL17N5P + OL18N5P + OL23N5P + OL27N5P + OL31N5P + OL32N5P + OL33N5P)/10,
-                avg_IN_5P_N = (OL6N5P + OL9N5P + OL10N5P + OL12N5P + OL13N5P + OL14N5P + OL16N5P + OL19N5P + OL42N5P + OL43N5P)/10)
-  
+  dplyr::mutate(avg_UE_5P_N = UE_5P_N_SUM/(12-UE_YN),#12
+                avg_CD_5P_N = CD_5P_N_SUM/(11-CD_YN),#11
+                avg_IA_5P_N = IA_5P_N_SUM/(10-IA_YN),#10
+                avg_IN_5P_N = IN_5P_N_SUM/(10-IN_YN))#10  
 #UE_5P_N_SUM, CD_5P_N_SUM, IA_5P_N_SUM, IN_5P_N_SUM
 #avg_UE_5P_N, avg_CD_5P_N, avg_IA_5P_N, avg_IN_5P_N
 
-
+#UE_YN, UE_5P 1,5,8,11,20,21,28,30,35,37,40,41 (12)
+#CD_YN, CD_5P 2,15,22,24,25,26,29,34,36,38,39 (11)
+#IA_YN, IA_5P 3,4R,7,17,18,23R,27R,31R,32R,33 (10)
+#IN_YN, IN_5P 6,9,10,12R,13,14R,16,19,42,43R (10)
 
 #'''
 
@@ -343,6 +346,7 @@ SSOH_mod <- SSOH_raw%>%
   select(PartNo,Age,Gender,CounterCode, avgSSOSH)
 OLIFE_mod <- OLIFE_raw%>%
   select(PartNo,Age,Gender, CounterCode,OLY5P_SUM, OLN5P_SUM,
+         IA_YN, UE_YN, CD_YN, IN_YN,
          IA_5P_N_SUM, UE_5P_N_SUM, CD_5P_N_SUM, IN_5P_N_SUM,
          IA_5P_Y_SUM, UE_5P_Y_SUM, CD_5P_Y_SUM, IN_5P_Y_SUM,
          avg_IA_5P_N, avg_UE_5P_N, avg_CD_5P_N, avg_IN_5P_N,
@@ -359,7 +363,7 @@ x_reduced <- x%>%
          dassANXIETY,    # - DASS - Anxiety score
          spqCOGPERCEP,   # - SPQ - Cognitive Perceptual subscale scores
          spqINTERPERSON, # - SPQ - Interpersonal
-         spqDISORGANIZED,# - SPQ - Disorganisation
+        spqDISORGANIZED,# - SPQ - Disorganisation
          spqTOTAL,       # - SPG - Total
          UE_YN, CD_YN, IA_YN, IN_YN, # OLIFE Yes No
          UE_5P, CD_5P, IA_5P, IN_5P, # OLIFE 5 Likert
@@ -371,22 +375,23 @@ x_reduced <- x%>%
          in_Ysum, in_Nsum,  # in 5 point scale when answer == Yes/No
          avgUE_Y, avgCD_Y, avgIA_Y, avgIN_Y, # Avg 5 point when answer was yes (for each OLIFE subscale)
          avgUE_N, avgCD_N, avgIA_N, avgIN_N) # Avg 5 point when answer was no  (for each OLIFE subscale)
-names(MainDF)
 
 p1 <- MainDF%>%
-  summarise(IA_N = mean(avg_IA_5P_N),
-            IN_N = mean(avg_IN_5P_N),
-            CD_N = mean(avg_CD_5P_N),
-            UE_N = mean(avg_UE_5P_N))
+  summarise(IA_N = mean(avg_IA_5P_N, na.rm = TRUE),
+            IN_N = mean(avg_IN_5P_N, na.rm = TRUE),
+            CD_N = mean(avg_CD_5P_N, na.rm = TRUE),
+            UE_N = mean(avg_UE_5P_N, na.rm = TRUE))
 p1b <- transpose(p1)
 p1b <- p1b%>%
   mutate(Row_Num = row_number(), colourColumn = 'Ns')%>%
   rename(Values = V1)
+
+
 p2 <- MainDF%>%
-  summarise(IA_Y = mean(avg_IA_5P_Y),
-            IN_Y = mean(avg_IN_5P_Y),
-            CD_Y = mean(avg_CD_5P_Y),
-            UE_Y = mean(avg_UE_5P_Y))
+  summarise(IA_Y = mean(avg_IA_5P_Y, na.rm = TRUE),
+            IN_Y = mean(avg_IN_5P_Y, na.rm = TRUE),
+            CD_Y = mean(avg_CD_5P_Y, na.rm = TRUE),
+            UE_Y = mean(avg_UE_5P_Y, na.rm = TRUE))
 p2b <- transpose(p2)
 p2b <- p2b%>%
   mutate(Row_Num = row_number(), colourColumn = 'Ys')%>%
@@ -396,9 +401,8 @@ P <- ggplot(p1b, aes(x = Row_Num, y = Values, colour = colourColumn))+
   geom_line()+
   geom_point()
 
-#P + scale_x_continuous(labels = c('a','b','c','d'))
-P + geom_line(data = p2b, aes(x = Row_Num, y = Values, colour = colour))+
-    geom_point(data = p2b, aes(x = Row_Num, y = Values, colour = colour))+
+P + geom_line(data = p2b, aes(x = Row_Num, y = Values, colour = colourColumn))+
+    geom_point(data = p2b, aes(x = Row_Num, y = Values, colour = colourColumn))+
     scale_x_continuous(labels = c('IA','IN','CD','UE'))+
     scale_y_continuous(limits = c(0,3))
 
